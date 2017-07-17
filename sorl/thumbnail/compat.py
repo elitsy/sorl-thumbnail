@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+import requests
 import sys
 
 __all__ = [
@@ -68,9 +69,10 @@ elif PY2:
 
 def urlopen(url):
     from sorl.thumbnail.conf import settings
-
-    req = Request(
-        url,
-        headers={'User-Agent': "python-urllib%s/0.6" % PythonVersion}
-    )
-    return _urlopen(req, timeout=settings.THUMBNAIL_URL_TIMEOUT)
+    kwargs = {
+        'headers': {'User-Agent': "python-urllib%s/0.6" % PythonVersion},
+        'timeout': settings.THUMBNAIL_URL_TIMEOUT,
+    }
+    if url.startswith('https://'):
+        kwargs['verify'] = False
+    return requests.get(url, **kwargs)
