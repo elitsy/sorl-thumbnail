@@ -224,7 +224,11 @@ class UrlStorage(Storage):
         return urlparse.urlunsplit((scheme, netloc, path, qs, anchor))
 
     def open(self, name, mode='rb'):
-        return urlopen(self.normalize_url(name))
+        url = self.normalize_url(name)
+        r = urlopen(url)
+        if r.ok:
+            return r.content
+        raise URLError('Bad response from "%s"' % url)
 
     def exists(self, name):
         try:
