@@ -233,7 +233,8 @@ class UrlStorage(Storage):
     def exists(self, name):
         try:
             self.open(name)
-        except URLError:
+#         except URLError:
+        except:
             return False
         return True
 
