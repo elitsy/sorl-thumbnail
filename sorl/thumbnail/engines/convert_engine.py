@@ -85,7 +85,7 @@ class Engine(EngineBase):
         """
         if image['size'] is None:
             args = settings.THUMBNAIL_IDENTIFY.split(' ')
-            args.append(image['source'])
+            args.append(image['source'] + '[0]')
             p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             p.wait()
             m = size_re.match(str(p.stdout.read()))
@@ -101,7 +101,7 @@ class Engine(EngineBase):
             fp.write(raw_data)
             fp.flush()
             args = settings.THUMBNAIL_IDENTIFY.split(' ')
-            args.append(fp.name)
+            args.append(fp.name + '[0]')
             p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             retcode = p.wait()
         return retcode == 0
@@ -112,7 +112,7 @@ class Engine(EngineBase):
 
         if settings.THUMBNAIL_CONVERT.endswith('gm convert'):
             args = settings.THUMBNAIL_IDENTIFY.split()
-            args.extend(['-format', '%[exif:orientation]', image['source']])
+            args.extend(['-format', '%[exif:orientation]', image['source'] + '[0]'])
             p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             p.wait()
             result = p.stdout.read().strip()
@@ -144,7 +144,7 @@ class Engine(EngineBase):
     def _flip_dimensions(self, image):
         if settings.THUMBNAIL_CONVERT.endswith('gm convert'):
             args = settings.THUMBNAIL_IDENTIFY.split()
-            args.extend(['-format', '%[exif:orientation]', image['source']])
+            args.extend(['-format', '%[exif:orientation]', image['source'] + '[0]'])
             p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             p.wait()
             result = p.stdout.read().strip()
@@ -169,6 +169,14 @@ class Engine(EngineBase):
         """
         image['options']['crop'] = '%sx%s+%s+%s' % (width, height, x_offset, y_offset)
         image['size'] = (width, height)  # update image size
+        return image
+
+    def _cropbox(self, image, x, y, x2, y2):
+        """
+        Crops the image to a set of x,y coordinates (x,y) is top left, (x2,y2) is bottom left
+        """
+        image['options']['crop'] = '%sx%s+%s+%s' % (x2 - x, y2 - y, x, y)
+        image['size'] = (x2 - x, y2 - y)  # update image size
         return image
 
     def _scale(self, image, width, height):

@@ -1,45 +1,82 @@
 language: python
+dist: xenial
 
-python:
-  - "3.6"
+matrix:
+  include:
+    - python: "2.7"
+      env: TOXENV=py27-django111-pil
+    - python: "2.7"
+      env: TOXENV=py27-django111-imagemagick
+    - python: "2.7"
+      env: TOXENV=py27-django111-graphicsmagick
+    - python: "2.7"
+      env: TOXENV=py27-django111-redis
+    - python: "2.7"
+      env: TOXENV=py27-django111-wand
+    - python: "2.7"
+      env: TOXENV=py27-django111-dbm
+
+    - python: "3.6"
+      env: TOXENV=py36-django111-pil
+    - python: "3.6"
+      env: TOXENV=py36-django111-imagemagick
+    - python: "3.6"
+      env: TOXENV=py36-django111-graphicsmagick
+    - python: "3.6"
+      env: TOXENV=py36-django111-redis
+    - python: "3.6"
+      env: TOXENV=py36-django111-wand
+    - python: "3.6"
+      env: TOXENV=py36-django111-dbm
+    - python: 3.6
+      env: TOXENV=flake8
+
+    - python: "3.6"
+      env: TOXENV=py36-django20-pil
+    - python: "3.6"
+      env: TOXENV=py36-django20-imagemagick
+    - python: "3.6"
+      env: TOXENV=py36-django20-graphicsmagick
+    - python: "3.6"
+      env: TOXENV=py36-django20-redis
+    - python: "3.6"
+      env: TOXENV=py36-django20-wand
+    - python: "3.6"
+      env: TOXENV=py36-django20-dbm
+
+    - python: "3.6"
+      env: TOXENV=py36-django21-pil
+    - python: "3.6"
+      env: TOXENV=py36-django21-imagemagick
+    - python: "3.6"
+      env: TOXENV=py36-django21-graphicsmagick
+    - python: "3.6"
+      env: TOXENV=py36-django21-redis
+    - python: "3.6"
+      env: TOXENV=py36-django21-wand
+    - python: "3.6"
+      env: TOXENV=py36-django21-dbm
+
+    - python: "3.7"
+      env: TOXENV=py37-django20-pil
+    - python: "3.7"
+      env: TOXENV=py37-django21-pil
+
+addons:
+  apt:
+    packages:
+      - libgraphicsmagick1-dev
+      # - libgraphicsmagick++1-dev
+      # - libboost-python-dev
+      - graphicsmagick
+      - libjpeg62
+      - zlib1g-dev
 
 cache:
-  pip:
-  apt:
+  apt: true
   directories:
     - .tox
-
-env:
-  - TOXENV=py27-django18-pil APT='libjpeg62 libjpeg62-dev zlib1g-dev'
-  - TOXENV=py27-django18-imagemagick APT=imagemagick
-  - TOXENV=py27-django18-graphicsmagick APT=graphicsmagick
-  - TOXENV=py27-django18-redis
-  - TOXENV=py27-django18-wand
-  - TOXENV=py27-django18-pgmagick APT='libgraphicsmagick++1-dev libboost-python-dev'
-  - TOXENV=py27-django18-dbm
-  - TOXENV=py34-django18-pil APT='libjpeg62 libjpeg62-dev zlib1g-dev'
-  - TOXENV=py34-django18-imagemagick APT=imagemagick
-  - TOXENV=py34-django18-graphicsmagick APT=graphicsmagick
-  - TOXENV=py34-django18-redis
-  - TOXENV=py34-django18-wand
-  - TOXENV=py34-django18-dbm
-  - TOXENV=py35-django110-pil APT='libjpeg62 libjpeg62-dev zlib1g-dev'
-  - TOXENV=py35-django110-imagemagick APT=imagemagick
-  - TOXENV=py35-django110-graphicsmagick APT=graphicsmagick
-  - TOXENV=py35-django110-redis
-  - TOXENV=py35-django110-wand
-  - TOXENV=py35-django110-dbm
-  - TOXENV=py36-django111-pil APT='libjpeg62 libjpeg62-dev zlib1g-dev'
-  - TOXENV=py36-django111-imagemagick APT=imagemagick
-  - TOXENV=py36-django111-graphicsmagick APT=graphicsmagick
-  - TOXENV=py36-django111-redis
-  - TOXENV=py36-django111-wand
-  - TOXENV=py36-django111-dbm
-
-
-before_install:
-  - sudo apt-get update -qq
-  - sudo apt-get install -qq $APT
+    - $HOME/.cache/pip
 
 after_failure:
   - cat /home/travis/.pip/pip.log
@@ -47,12 +84,12 @@ after_failure:
 after_success: coveralls
 
 install:
-  - pip install -q flake8 tox coveralls
+  - pip install --upgrade pip
+  - pip install -q tox coveralls
 
 script:
   - env | sort
   - tox
-  - flake8 --show-source sorl/
 
 services:
   - redis-server
@@ -63,9 +100,10 @@ notifications:
 deploy:
   provider: pypi
   user: jazzband
+  server: https://jazzband.co/projects/sorl-thumbnail/upload
+  distributions: sdist bdist_wheel
   password:
-    secure:
+    secure: BZlzJyqEbo1nofxEqeE12EyIcM6ldJL40yDRo62qk1dBirUV+eJQN3kTJtKTqVgTMRalQJKqMZgbhWtvxo2wsuBx+JW3LlfjYuY/fNzj/+5x7Tq/NEy4HyBj4RdWdincmdvQ0n4ixar6cDr79KjHUzC9Db3psbTRE6+Vw0EJTM4=
   on:
     tags: true
-    distributions: sdist bdist_wheel
     repo: jazzband/sorl-thumbnail

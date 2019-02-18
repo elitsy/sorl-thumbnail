@@ -7,7 +7,7 @@ import re
 
 from django.core.files.base import File, ContentFile
 from django.core.files.storage import Storage  # , default_storage
-from django.utils.encoding import force_text
+from django.utils.encoding import force_text, python_2_unicode_compatible
 from django.utils.functional import LazyObject, empty
 from StringIO import StringIO
 from sorl.thumbnail import default
@@ -84,6 +84,7 @@ class BaseImageFile(object):
     src = url
 
 
+@python_2_unicode_compatible
 class ImageFile(BaseImageFile):
     _size = None
 
@@ -101,7 +102,8 @@ class ImageFile(BaseImageFile):
 
         # Remove query args from names. Fixes cache and signature arguments
         # from third party services, like Amazon S3 and signature args.
-        self.name = self.name.split('?')[0]
+        if settings.THUMBNAIL_REMOVE_URL_ARGS:
+            self.name = self.name.split('?')[0]
 
         # Support for relative protocol urls
         if self.name.startswith('//'):
@@ -124,7 +126,7 @@ class ImageFile(BaseImageFile):
             if self.name.startswith(location):
                 self.name = self.name[len(location):]
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def exists(self):

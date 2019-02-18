@@ -1,11 +1,11 @@
-|travis| |pypi| |coveralls|
+|travis| |docs| |pypi| |jazzband-badge| |coveralls|
 
 Thumbnails for Django.
 
 Features at a glance
 ====================
 
-- Support for Django 1.8, 1.10, 1.11, following the `Django supported versions policy`_
+- Support for Django 1.11, 2.0, and 2.1 following the `Django supported versions policy`_
 - Python 3 support
 - Storage support
 - Pluggable Engine support for `Pillow`_, `ImageMagick`_, `PIL`_, `Wand`_, `pgmagick`_, and `vipsthumbnail`_
@@ -27,8 +27,8 @@ Developers
 
 |jazzband|
 
-This is a `Jazzband <https://jazzband.co>`_ project. By contributing you agree to 
-abide by the `Contributor Code of Conduct <https://jazzband.co/about/conduct>`_ 
+This is a `Jazzband <https://jazzband.co>`_ project. By contributing you agree to
+abide by the `Contributor Code of Conduct <https://jazzband.co/about/conduct>`_
 and follow the `guidelines <https://jazzband.co/about/guidelines>`_.
 
 Feel free to create a new Pull request if you want to propose a new feature.
@@ -39,8 +39,6 @@ For releases updates and more in deep development discussion use our mailing lis
 in Google Groups.
 
 - IRC Channel: irc://irc.freenode.net/#sorl-thumbnail
-
-- Gitter: https://gitter.im/jazzband/sorl-thumbnail
 
 - Mailing List: sorl-thumbnail@googlegroups.com https://groups.google.com/d/forum/sorl-thumbnail
 
@@ -132,6 +130,18 @@ You can use the 'get_thumbnail'::
 
 See more examples in the section `Low level API examples`_ in the Documentation
 
+Using in combination with other thumbnailers
+-------------------------------------------
+
+Alternatively, you load the templatetags by {% load sorl_thumbnail %}
+instead of traditional {% load thumbnail %}. It's especially useful in
+projects that do make use of multiple thumbnailer libraries that use the
+same name (``thumbnail``) for the templatetag module::
+
+    {% load sorl_thumbnail %}
+    {% thumbnail item.image "100x100" crop="center" as im %}
+        <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+    {% endthumbnail %}
 
 Frequently asked questions
 ==========================
@@ -152,10 +162,17 @@ So it will avoid to overly query the S3 API.
 
 .. |travis| image:: https://travis-ci.org/jazzband/sorl-thumbnail.svg?branch=master
     :target: https://travis-ci.org/jazzband/sorl-thumbnail
-.. |pypi| image:: https://badge.fury.io/py/sorl-thumbnail.png
-    :target: http://badge.fury.io/py/sorl-thumbnail
+.. |docs| image:: https://readthedocs.org/projects/pip/badge/?version=latest
+    :alt: Documentation for latest version
+    :target: http://sorl-thumbnail.rtfd.org/en/latest/
+.. |pypi| image:: https://img.shields.io/pypi/v/sorl-thumbnail.svg
+    :target: https://pypi.python.org/pypi/sorl-thumbnail
+    :alt: sorl-thumbnail on PyPI
 .. |coveralls| image:: https://coveralls.io/repos/jazzband//sorl-thumbnail/badge.png?branch=master
     :target: https://coveralls.io/r/jazzband//sorl-thumbnail?branch=master
+.. |jazzband-badge| image:: https://jazzband.co/static/img/badge.svg
+   :target: https://jazzband.co/
+   :alt: Jazzband
 .. |jazzband| image:: https://jazzband.co/static/img/jazzband.svg
    :target: https://jazzband.co/
    :alt: Jazzband
